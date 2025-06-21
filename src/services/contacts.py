@@ -2,7 +2,6 @@ from typing import Optional
 
 from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError
 
 from src.repository.contacts import ContactRepository
 from src.schemas import ContactCreate, ContactUpdate
@@ -30,12 +29,7 @@ class ContactService:
         return contact
 
     async def create_contact(self, body: ContactCreate):
-        try:
-            return await self.repo.create_contact(body)
-        except IntegrityError as e:
-            raise HTTPException(
-                status_code=400, detail="Contact with this email already exists"
-            ) from e
+        return await self.repo.create_contact(body)
 
     async def update_contact(self, contact_id: int, body: ContactUpdate):
         contact = await self.repo.update_contact(contact_id, body)
